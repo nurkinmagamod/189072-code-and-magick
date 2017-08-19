@@ -1,37 +1,45 @@
 'use strict';
 
+function drawRect(ctx, upperLeftCornerX, upperLeftCornerY, width, height, color) {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.fillRect(upperLeftCornerX, upperLeftCornerY, width, height);
+  ctx.restore();
+}
+
+function drawText(ctx, text, X, Y, color) {
+  ctx.fillStyle = color;
+  ctx.fillText(text, X, Y);
+}
+
 window.renderStatistics = function (ctx, names, times) {
   // Тень
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  ctx.fillRect(110, 20, 420, 270);
+  drawRect(ctx, 110, 20, 420, 270, 'rgba(0, 0, 0, 0.7)');
 
   // Основное окно
-  ctx.fillStyle = 'white';
   ctx.strokeRect(100, 10, 420, 270);
-  ctx.fillRect(100, 10, 420, 270);
+  drawRect(ctx, 100, 10, 420, 270, 'white');
 
   // Текст
   ctx.fillStyle = '#000';
   ctx.font = '16px PT Mono';
-  ctx.fillText('Ура вы победили!', 120, 40);
+  drawText(ctx, 'Ура вы победили!', 120, 40, '#000');
+  drawText(ctx, 'Список результатов:', 120, 60, '#000');
 
   // стататистика
-  var max = -1;
-  var maxIndex = -1;
-
-  for (var i = 0; i < times.length; i++) {
-    var time = times[i];
-    if (time > max) {
-      max = time;
-      maxIndex = i;
+  function getMaxPositiveNumber(numbers) {
+    var max = -1;
+    for (var i = 0; i < numbers.length; i++) {
+      var numer = numbers[i];
+      if (numer > max) {
+        max = numer;
+      }
     }
+    return max;
   }
 
   var histogramHeight = 150; // px;
-  var step = histogramHeight / (max - 0); // px;
-
-  ctx.fillText('Список результатов:', 120, 60);
-
+  var step = histogramHeight / getMaxPositiveNumber(times); // px;
   var barWidth = 40; // px;
   var indent = 50; // px;
   var initialX = 200; // px;
@@ -41,19 +49,13 @@ window.renderStatistics = function (ctx, names, times) {
     var randomAlpha = Math.random();
 
     if (names[i] !== 'Вы') {
-      ctx.fillStyle = 'rgba(0, 0, 255,' + randomAlpha + ')';
+      drawRect(ctx, initialX + indent * i, initialY - times[i] * step, barWidth, times[i] * step, 'rgba(0, 0, 255,' + randomAlpha + ')');
+    } else {
+      drawRect(ctx, initialX + indent * i, initialY - times[i] * step, barWidth, times[i] * step, 'rgb(255, 0, 0)');
     }
-    else {
-      ctx.fillStyle = 'rgb(255, 0, 0)';
-    }
-    ctx.fillRect(initialX + indent * i, initialY - times[i] * step, barWidth, times[i] * step);
-  }
 
-  ctx.fillStyle = '#000';
-
-  for (var i = 0; i < times.length; i++) {
-    ctx.fillText(names[i], initialX + indent * i, initialY + 20);
-    ctx.fillText(Math.round(times[i]), initialX + indent * i, initialY - 5 - times[i] * step);
+    drawText(ctx, names[i], initialX + indent * i, initialY + 20, '#000');
+    drawText(ctx, Math.round(times[i]), initialX + indent * i, initialY - 5 - times[i] * step, '#000');
   }
 };
 
