@@ -12,6 +12,10 @@ function drawText(ctx, text, X, Y, color) {
   ctx.fillText(text, X, Y);
 }
 
+function getRandomValue(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
 window.renderStatistics = function (ctx, names, times) {
   // Тень
   drawRect(ctx, 110, 20, 420, 270, 'rgba(0, 0, 0, 0.7)');
@@ -21,7 +25,6 @@ window.renderStatistics = function (ctx, names, times) {
   drawRect(ctx, 100, 10, 420, 270, 'white');
 
   // Текст
-  ctx.fillStyle = '#000';
   ctx.font = '16px PT Mono';
   drawText(ctx, 'Ура вы победили!', 120, 40, '#000');
   drawText(ctx, 'Список результатов:', 120, 60, '#000');
@@ -46,16 +49,23 @@ window.renderStatistics = function (ctx, names, times) {
   var initialY = 250; // px;
 
   for (var i = 0; i < times.length; i++) {
-    var randomAlpha = Math.random();
 
-    if (names[i] !== 'Вы') {
-      drawRect(ctx, initialX + indent * i, initialY - times[i] * step, barWidth, times[i] * step, 'rgba(0, 0, 255,' + randomAlpha + ')');
-    } else {
-      drawRect(ctx, initialX + indent * i, initialY - times[i] * step, barWidth, times[i] * step, 'rgb(255, 0, 0)');
-    }
+    var xOffset = initialX + indent * i;
+    var time = times[i];
+    var textColor = '#000';
+    var yOffset = initialY - time * step;
+    var underBarTime = Math.round(times[i]);
+    var underBarTimeYoffSet = yOffset - 5;
+    var barNameYoffSet = initialY + 20;
+    var barName = names[i];
+    var barHeight = time * step;
+    var barColor = names[i] === 'Вы'
+      ? 'rgb(255, 0, 0)'
+      : 'rgba(0, 0, 255, ' + getRandomValue(0.05, 1) + ')';
 
-    drawText(ctx, names[i], initialX + indent * i, initialY + 20, '#000');
-    drawText(ctx, Math.round(times[i]), initialX + indent * i, initialY - 5 - times[i] * step, '#000');
+    drawRect(ctx, xOffset, yOffset, barWidth, barHeight, barColor);
+    drawText(ctx, barName, xOffset, barNameYoffSet, textColor);
+    drawText(ctx, underBarTime, xOffset, underBarTimeYoffSet, textColor);
   }
 };
 
