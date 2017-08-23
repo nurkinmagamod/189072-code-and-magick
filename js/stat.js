@@ -45,12 +45,12 @@ window.renderStatistics = function (ctx, names, times) {
   var step = histogramHeight / getMaxPositiveNumber(times); // px;
   var barWidth = 40; // px;
   var indent = 50; // px;
-  var initialX = 200; // px;
+  var initialX = 150; // px;
   var initialY = 250; // px;
 
   for (var i = 0; i < times.length; i++) {
 
-    var xOffset = initialX + indent * i;
+    var xOffset = initialX + (barWidth + indent) * i;
     var time = times[i];
     var textColor = '#000';
     var yOffset = initialY - time * step;
